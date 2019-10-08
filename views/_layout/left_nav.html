@@ -1,0 +1,27 @@
+<!-- 左侧菜单开始 -->
+<div class="left-nav">
+    <div id="side-nav">
+        <ul id="nav">
+
+            {{range .menus}}
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xe{{.Icon}};</i>
+                    <cite>{{.Name}}</cite>
+                    <i class="iconfont nav_right">&#xe697;</i>
+                </a>
+                <ul class="sub-menu">
+                {{range .SubMenus}}
+                    <li>
+                        <a _href="{{.Url}}">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>{{.Name}}</cite>
+                        </a>
+                    </li >
+                {{end}}
+                </ul>
+            </li>
+            {{end}}
+        </ul>
+    </div>
+</div>

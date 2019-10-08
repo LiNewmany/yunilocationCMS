@@ -1,0 +1,169 @@
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">演示</a>
+        <a>
+          <cite>导航元素88</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so layui-form-pane" method="post" action="/admin/rbac/category_add">
+            <div class="layui-input-inline">
+                <input class="layui-input" placeholder="分类名" name="display_name" lay-verify="required">
+            </div>
+            <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon"></i>增加</button>
+        </form>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <span class="x-right" style="line-height:40px">共有数据：{{.page.TotalCount}} 条</span>
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th>ID</th>
+            <th>分类名</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+        {{range .page.List}}
+        <tr>
+            <td>
+                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='{{.Id}}'><i class="layui-icon">&#xe605;</i></div>
+            </td>
+            <td>{{.Id}}</td>
+            <td>{{.DisplayName}}</td>
+            <td class="td-manage">
+                <a title="编辑"  onclick="x_admin_show('编辑','/admin/rbac/category_edit?id={{.Id}}')" href="javascript:;">
+                    <i class="layui-icon">&#xe642;</i>
+                </a>
+                <a title="删除" onclick="member_del(this, {{.Id}})" href="javascript:;">
+                    <i class="layui-icon">&#xe640;</i>
+                </a>
+            </td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+    <div class="page" id="page">
+
+    </div>
+
+</div>
+<script>
+
+    /*用户-删除*/
+    function member_del(obj,id){
+        layer.confirm('确认要删除吗？',function(index){
+            console.log(id, index);
+
+            $.ajax({
+                url:"/admin/rbac/category_del",
+                type:"post",
+                dataType:"json",
+                data:{"ids":id},
+                success:function (e) {
+                    console.log(e);
+                    if(e.code == 0) {
+                        //发异步删除数据
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!',{icon:1,time:1000});
+                    }else{
+                        layer.msg(e.msg, function(){
+
+                        });
+                    }
+                } ,
+                error:function (e) {
+                    layer.msg(JSON.stringify(e),function(){
+
+                    });
+                }
+            });
+
+        });
+    }
+
+
+
+    function delAll (argument) {
+
+        var data = tableCheck.getData();
+
+        console.log(data);
+
+        layer.confirm('确认要删除吗？'+data,function(index){
+            ids = data.join(",");
+            $.ajax({
+                url:"/admin/rbac/category_del",
+                type:"post",
+                dataType:"json",
+                data:{"ids":ids},
+                success:function (e) {
+                    console.log(e);
+                    if(e.code == 0) {
+                        //捉到所有被选中的，发异步进行删除
+                        layer.msg('删除成功', {icon: 1});
+                        $(".layui-form-checked").not('.header').parents('tr').remove();
+                    }else{
+                        layer.msg(e.msg, function(){
+
+                        });
+                    }
+                } ,
+                error:function (e) {
+                    layer.msg(JSON.stringify(e),function(){
+
+                    });
+                }
+            });
+        });
+    }
+
+    //分页
+    layui.use('laypage', function () {
+        var laypage = layui.laypage;
+
+        laypage.render({
+            elem:'page',
+            count:'{{.page.TotalCount}}',
+            limit:'{{.page.PageSize}}',
+            curr:'{{.page.PageNo}}',
+            jump:function (obj, first) {
+                console.log(obj.curr);
+                console.log(obj.limit);
+
+                if(!first){
+
+                    //提前page和pageSize以外参数
+                    search = location.search;
+
+                    params = search.replace("?", "").split("&");
+                    console.log("params:", params);
+
+                    newParams = [];
+                    for (k  in params) {
+                        console.log(params[k], k);
+                        if (params[k].localeCompare("") != 0 && params[k].indexOf("page") == -1) {
+                            newParams.push(params[k]);
+                        }
+                    }
+
+                    if(newParams.length > 0){
+                        url = location.protocol + "//" + location.host  + location.pathname + "?" + newParams.join("&") + "&";
+                    }else{
+                        url = location.protocol + "//" + location.host  + location.pathname + "?";
+                    }
+
+                    location.href= url + "page="+obj.curr + "&pageSize="+ obj.limit;
+                }
+            }
+        });
+    });
+</script>

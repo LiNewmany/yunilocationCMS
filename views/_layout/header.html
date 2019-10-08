@@ -1,0 +1,24 @@
+<div class="container">
+    <div class="logo"><a href="/">榆你同城后台管理CMS</a></div>
+    <div class="left_open">
+        <i title="展开左侧栏" class="iconfont">&#xe699;</i>
+    </div>
+    <ul class="layui-nav left fast-add" lay-filter="">
+        <li class="layui-nav-item">
+            <a href="javascript:;">+新增</a>
+            <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                <dd><a onclick="x_admin_show('管理员','/admin/rbac/admin_add')"><i class="iconfont">&#xe6b8;</i>管理员</a></dd>
+            </dl>
+        </li>
+    </ul>
+    <ul class="layui-nav right" lay-filter="">
+        <li class="layui-nav-item">
+            <a href="javascript:;">{{.admin.Name}}</a>
+            <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                <dd><a onclick="x_admin_show('个人信息','/admin/rbac/admin_edit?id={{.admin.Id}}')">个人信息</a></dd>
+                <dd><a href="/admin/login/login_out">退出</a></dd>
+            </dl>
+        </li>
+    </ul>
+
+</div>
